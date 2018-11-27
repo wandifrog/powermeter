@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+
+<body>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/semantic-ui@2.4.2/dist/semantic.min.css">
+    <style>
+        body {
+            padding: 20px 0;
+        }
+        .custom-container {
+            width: 600px;
+            margin: 0 auto;
+        }
+        .flex {
+            display: flex;
+            justify-content: center;
+        }
+
+        .flex img {
+            width: 150px;
+            height: 150px;
+            margin: auto;
+            margin: 15px;
+        }
+    </style>
+
+    <div id="app" class="custom-container">
+        <div class="flex">
+            <img src="./image.jpg">
+        </div>
+        <div class="flex">
+            <a href="/">
+                <div class="ui button">Home</div>
+            </a>
+            <a href="/bar.html">
+                <div class="ui button">Bar</div>
+            </a>
+        </div>
+
+        <div class="ui form" style="margin-top: 15px;">
+            <div class="inline fields">
+                <div class="three wide field">
+                    <label>Inputan dari beijer</label>
+                </div>
+                <div class="ten wide field">
+                    <input type="text" placeholder="example 20000" :value="literPercentage" ref="input">
+                </div>
+                <div class="three wide field">
+                    <button class="ui button" @click="renderGauge">Submit</button>
+                </div>
+            </div>
+        </div>
+
+        <svg id="fillgauge1" width="97%" height="250"></svg>
+        <div style="text-align: center;">{{ literPercentage }} / 350000 Liter</div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/vue"></script>
+
+    <script src="http://d3js.org/d3.v3.min.js" language="JavaScript"></script>
+    <script src="./liquidFillGauge.js" language="JavaScript"></script>
+
+    <script>
+        new Vue({
+            el: '#app',
+            data: {
+                literPercentage: 300000
+            },
+            methods: {
+                renderGauge() {
+                    var inputValue = this.$refs.input.value
+                    var result = inputValue / 350000 * 100
+                    var gauge1 = loadLiquidFillGauge("fillgauge1", result);
+                    var config1 = liquidFillGaugeDefaultSettings();
+                    config1.circleColor = "#FF7777";
+                    config1.textColor = "#FF4444";
+                    config1.waveTextColor = "#FFAAAA";
+                    config1.waveColor = "#FFDDDD";
+                    config1.circleThickness = 0.2;
+                    config1.textVertPosition = 0.2;
+                    config1.waveAnimateTime = 1000;
+                    this.literPercentage = inputValue
+                }
+            },
+
+            mounted() {
+                this.renderGauge()
+            }
+        })
+
+    </script>
+</body>
+
+</html>

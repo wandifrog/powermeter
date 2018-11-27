@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+
+<body>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/semantic-ui@2.4.2/dist/semantic.min.css">
+    <style>
+        body {
+            padding: 20px 0;
+        }
+        .custom-container {
+            width: 600px;
+            margin: 0 auto;
+        }
+        .flex {
+            display: flex;
+            justify-content: center;
+        }
+
+        .flex img {
+            width: 150px;
+            height: 150px;
+            margin: auto;
+            margin: 15px;
+        }
+    </style>
+
+    <div id="app" class="custom-container">
+        <div class="flex">
+            <img src="./image.jpg">
+        </div>
+        <div class="flex">
+            <a href="/">
+                <div class="ui button">Home</div>
+            </a>
+            <a href="/chart.html">
+                <div class="ui button">Chart</div>
+            </a>
+        </div>
+
+        <div class="ui form" style="margin-top: 20px;">
+            <div class="four fields">
+                <div class="field">
+                    <label>Tanggal</label>
+                    <input type="date">
+                </div>
+                <div class="field">
+                    <label>Jam</label>
+                    <input type="text" placeholder="Jam">
+                </div>
+                <div class="field">
+                    <label>Set Point</label>
+                    <input type="text" placeholder="Set Point" v-model="setPoint">
+                </div>
+                <div class="field">
+                    <button class="ui button" @click="renderChart">Submit</button>
+                </div>
+            </div>
+        </div>
+        <div>
+            <canvas id="myChart"></canvas>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/vue"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.3/Chart.bundle.min.js"></script>
+
+    <script>
+
+        new Vue({
+            el: '#app',
+            data: {
+                setPoint: 10,
+                chartData: [],
+            },
+            methods: {
+                renderChart() {
+                    var asd = []
+                    this.chartData.forEach(a => {
+                        var data = {
+                            ...a
+                        }
+                        if (a.value >= this.setPoint) {
+                            data.color = 'red'
+                        }
+                        else {
+                            data.color = 'green'
+                        }
+                        asd.push(data)
+                    })
+
+                    var ctx = document.getElementById("myChart");
+                    var myChart = new Chart(ctx, {
+                        type: 'bar',
+                        data: {
+                            labels: asd.map(a => a.label),
+                            datasets: [{
+                                // label: '# of Votes',
+                                data: asd.map(a => a.value),
+                                backgroundColor: asd.map(a => a.color),
+                                borderWidth: 1
+                            }]
+                        },
+                        options: {
+                            scales: {
+                                yAxes: [{
+                                    ticks: {
+                                        beginAtZero: true
+                                    }
+                                }]
+                            }
+                        }
+                    })
+                },
+
+            },
+
+            mounted() {
+                fetch('./sample-data.json')
+                    .then(response => {
+                        return response.json();
+                    })
+                    .then(myJson => {
+                        console.log(myJson);
+                        this.chartData = myJson
+                        this.renderChart()
+                    });
+            }
+        })
+    </script>
+</body>
+
+</html>
