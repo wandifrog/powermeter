@@ -29,6 +29,13 @@
             margin: auto;
             margin: 15px;
         }
+        .pos {
+            position: absolute;
+            bottom: 1px;
+        }
+        .flex.url {
+            margin-top: 13px; 
+        }
     </style>
 
     <div id="app" class="custom-container">
@@ -39,10 +46,37 @@
             <a href="/">
                 <div class="ui button">Home</div>
             </a>
-            <a href="/chart.html">
-                <div class="ui button">Chart</div>
+            <a href="/gauge.html">
+                <div class="ui button">Gauge</div>
             </a>
         </div>
+
+            <input type="radio" name="fruit" value="one" v-model="radio">
+            <label>Hari ini</label>
+            <input type="radio" name="fruit" value="two" v-model="radio">
+            <label>Range hari</label>
+
+            <div v-show="radio == 'one'">
+                <label>mulai</label>
+                <select v-model="one.startAt">
+                    <option v-for="(n, i) in 24">{{ i }}</option>
+                </select>
+
+                <label>sampai</label>
+                <select v-model="one.endAt">
+                    <option v-for="(n, i) in 24">{{ i }}</option>
+                </select>
+                <button @click="oneSubmit">submit (console)</button>
+            </div>
+
+            <div v-show="radio == 'two'">
+                <label>mulai</label>
+                <input type="date" v-model="two.startAt">
+                <label>sampai</label>
+                <input type="date" v-model="two.endAt">
+            </div>
+
+        <button @click="test">debugger</button>
 
         <div class="ui form" style="margin-top: 20px;">
             <div class="four fields">
@@ -59,7 +93,7 @@
                     <input type="text" placeholder="Set Point" v-model="setPoint">
                 </div>
                 <div class="field">
-                    <button class="ui button" @click="renderChart">Submit</button>
+                    <button class="ui button pos" @click="renderChart">Submit</button>
                 </div>
             </div>
         </div>
@@ -76,10 +110,38 @@
         new Vue({
             el: '#app',
             data: {
-                setPoint: 10,
+                setPoint: 12,
                 chartData: [],
+                radio: 'one',
+                one: {
+                    startAt: '',
+                    endAt: '',
+                },
+                two: {
+                    startAt: '2017-07-04',
+                    endAt: ''
+                }
             },
             methods: {
+                test() {
+                    console.log(this.two.startAt)
+                    console.log(this.two.endAt)
+                },
+                oneSubmit() {
+                    var date1 = ''
+                    var date2 = ''
+                    console.log(this.one.startAt, this.one.endAt)
+                    if (this.one.startAt < 10 || this.one.endAt < 10) {
+                        date1 += '0' + this.one.startAt + ':00:01'
+                        date2 += '0' + this.one.endAt + ':00:01'
+                    }
+                    else {
+                        date1 += ':00:01'
+                        date2 += ':00:01'
+                    }
+                    if (this.one.endAt == 23) date2 = '23:59:59'
+                    console.log(date1, date2)
+                },
                 renderChart() {
                     var asd = []
                     this.chartData.forEach(a => {
